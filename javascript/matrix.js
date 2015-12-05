@@ -1,14 +1,145 @@
-$(document).ready(function canvas() {
-	alert('canvas ready!');
+var ema, matrix, canX, canY, mouseIsDown = 0;
+var circleObjects = [];
+var redrawCircle = false;
+// später aus der Datenbank
+var circles = [[850,600,'red'],[100,100,'red'],[200,200,'green'],[400,500,'black'],[700,100,'blue'],[90,300,'pink'],[600,200,'brown']];
+ema = document.getElementById("ema");
+matrix = ema.getContext("2d");
+
+// constructor for a task / circle
+function Circle(x,y,topicC) {
+	this.x = x || width-50;
+	this.y = y || height-50;
+	this.topicC = topicC || "black";
+	this.touched = false;
+	this.drawn = false;
+}
+
+// draw that particular circle
+Circle.prototype.drawCircle = function (field) {
+	field.beginPath();
+	field.arc(this.x, this.y, 5, 0, 2*Math.PI);
+	field.lineWidth = 2;
+	field.strokeStyle = this.topicC;
+	field.stroke();
+	this.drawn = true;
+}
+
+// when the mouse cursor howers over a circle, the middle of the circle is filled 
+// TODO opens up div with description of the task
+Circle.prototype.howerCircle = function (field) {
+	field.beginPath();
+	field.arc (this.x, this.y, 1, 0, 2*Math.PI);
+	field.Width = 0.1;
+	field.strokeStyle = this.topicC;
+	field.stroke();
+	this.touched = true;
+}
+
+// when the mouse cursor is no longer on the circle, the circle should be unfilled again
+// TODO and the div should disappear
+Circle.prototype.emptyCircle = function (field) {
+	field.clearRect(this.x-7,this.y-7,14,14);
+	this.touched = false;
+	this.drawCircle(field);
+}
+
+// uses the property method drawCircle to draw all circles in the beginning
+function drawCircles(field, array) {
+	for (i = 0; i < array.length; i++) {
+		array[i].drawCircle(field);
+	}
+}
+
+// start
+function init() {
+	ema.addEventListener("mousedown", mouseDown, false);
+	ema.addEventListener("mousemove", mouseXY, false);
+	ema.addEventListener("touchstart", touchDown, false);
+	ema.addEventListener("touchmove", touchXY, true);
+	ema.addEventListener("touchend", touchUp, false);
 	
-	var ema = document.getElementById("ema");
-	var matrix = ema.getContext("2d");
+	document.body.addEventListener("mouseup", mouseUp, false);
+	document.body.addEventListener("touchcancel", touchUp, false);
+	
+	var width = ema.width;
+	var height = ema.height;
 
-	var width = document.getElementById('ema').offsetWidth;
-	var height = document.getElementById('ema').offsetHeight;
+	for (i=0; i<circles.length; i++) {
+		circleObjects.push(new Circle(circles[i][0], circles[i][1], circles[i][2]));
+	}
 
+	// Matrix Achsen und Tasks zeichnen
 	drawAxes(matrix, width, height);
-});
+	drawCircles(matrix, circleObjects);
+
+}
+
+function mouseUp() {
+	mouseIsDown = 0;
+	mouseXY();
+}
+
+function touchUp() {
+	mouseIsDown = 0;
+	// no touch to track, so just show state
+	showPos();
+}
+
+function mouseDown() {
+	mouseIsDown = 1;
+	mouseXY(); 
+} 
+
+function touchDown() {
+	mouseIsDown = 1;
+	touchXY();
+}
+
+function mouseXY(e) {
+	if (!e)
+		var e = event;
+	canX = e.pageX - ema.offsetLeft;
+	canY = e.pageY - ema.offsetTop;
+	showPos();
+}
+
+function touchXY(e) {
+	if (!e)
+		var e = event;
+	e.preventDefault();
+	canX = e.targetTouches[0].pageX - ema.offsetLeft;
+	canY = e.targetTouches[0].pageY - ema.offsetTop;
+	showPos();
+}
+
+function showPos() {
+	// large, centered, bright green text
+	matrix.font = "12pt Helvetica";
+	matrix.textAlign = "left";
+	matrix.textBaseline = "top";
+	matrix.fillStyle = "black";
+	var str = canX + ", " + canY;
+	if (mouseIsDown)
+		str += " down";
+	if (!mouseIsDown)
+		str += " up";
+	// var touched;
+	for (i=0; i<circleObjects.length; i++) {
+		if (canX >= circleObjects[i].x-5 && canX <= circleObjects[i].x+5 && canY >= circleObjects[i].y-5 && canY <= circleObjects[i].y+5) {
+			if (!circleObjects[i]["touched"]) {
+				circleObjects[i].howerCircle(matrix);
+			}
+		} else {
+			if (circleObjects[i]["touched"]) {
+				circleObjects[i].emptyCircle(matrix);
+			}
+		}		
+	}	
+	// control to display correct coordinates
+	matrix.clearRect(850,625,50,40);
+	matrix.fillText(str, 850, 625, 50);
+}
 
 function drawAxes(field, width, height) {
 	// untere Ecke y-Wert
@@ -71,3 +202,5 @@ function drawAxes(field, width, height) {
 
 	field.restore();
 }
+
+init();
