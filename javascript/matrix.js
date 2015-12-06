@@ -18,7 +18,7 @@ function Circle(x,y,topicC) {
 // draw that particular circle
 Circle.prototype.drawCircle = function (field) {
 	field.beginPath();
-	field.arc(this.x, this.y, 5, 0, 2*Math.PI);
+	field.arc(this.x, this.y, 7, 0, 2*Math.PI);
 	field.lineWidth = 2;
 	field.strokeStyle = this.topicC;
 	field.stroke();
@@ -29,8 +29,10 @@ Circle.prototype.drawCircle = function (field) {
 // TODO opens up div with description of the task
 Circle.prototype.howerCircle = function (field) {
 	field.beginPath();
-	field.arc (this.x, this.y, 1, 0, 2*Math.PI);
-	field.Width = 0.1;
+	field.arc (this.x, this.y, 2, 0, 2*Math.PI);
+	field.Width = 1;
+	field.fillStyle = this.topicC;
+	field.fill();
 	field.strokeStyle = this.topicC;
 	field.stroke();
 	this.touched = true;
@@ -39,7 +41,7 @@ Circle.prototype.howerCircle = function (field) {
 // when the mouse cursor is no longer on the circle, the circle should be unfilled again
 // TODO and the div should disappear
 Circle.prototype.emptyCircle = function (field) {
-	field.clearRect(this.x-7,this.y-7,14,14);
+	field.clearRect(this.x-9,this.y-9,18,18);
 	this.touched = false;
 	this.drawCircle(field);
 }
@@ -49,6 +51,10 @@ function drawCircles(field, array) {
 	for (i = 0; i < array.length; i++) {
 		array[i].drawCircle(field);
 	}
+}
+
+function Topic() {
+
 }
 
 // start
@@ -126,7 +132,7 @@ function showPos() {
 		str += " up";
 	// var touched;
 	for (i=0; i<circleObjects.length; i++) {
-		if (canX >= circleObjects[i].x-5 && canX <= circleObjects[i].x+5 && canY >= circleObjects[i].y-5 && canY <= circleObjects[i].y+5) {
+		if (canX >= circleObjects[i].x-7 && canX <= circleObjects[i].x+7 && canY >= circleObjects[i].y-7 && canY <= circleObjects[i].y+7) {
 			if (!circleObjects[i]["touched"]) {
 				circleObjects[i].howerCircle(matrix);
 			}
