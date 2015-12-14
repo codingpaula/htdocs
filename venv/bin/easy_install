@@ -1,4 +1,4 @@
-#!/Applications/MAMP/htdocs/venv/bin/python
+#!/Users/Muna/EMA/htdocs/venv/bin/python
 
 # -*- coding: utf-8 -*-
 import re
