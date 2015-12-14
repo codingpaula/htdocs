@@ -1,16 +1,26 @@
 var ema, matrix, canX, canY, mouseIsDown = 0;
 var circleObjects = [];
 var redrawCircle = false;
+// var topicNumber = 0;
+// var topLis = new TopicList();
 // später aus der Datenbank
-var circles = [[850,600,'red'],[100,100,'red'],[200,200,'green'],[400,500,'black'],[700,100,'blue'],[90,300,'pink'],[600,200,'brown']];
+var topics = [["Uni","red"],["Privates","green"]];
+var circles = [[850,600,"#ff0000"],[100,100,"#00ff00"],[200,200,"#0000ff"],[400,500,"#000000"],[700,100,"#00ffff"],[90,300,"#ffffff"],[600,200,"#ffff00"]];
 ema = document.getElementById("ema");
 matrix = ema.getContext("2d");
 
 // constructor for a task / circle
-function Circle(x,y,topicC) {
+function Circle(x,y,colour) {
 	this.x = x || width-50;
 	this.y = y || height-50;
-	this.topicC = topicC || "black";
+	this.colour = colour || "#000000";
+	// default topic?
+	// this.topic = topic;
+	// topic to colour
+	// for (i=0; i<topics.length; i++) {
+	// 	if (topics[i][0] ===  topic)
+	// 		this.colour = topics[i][0];
+	// }
 	this.touched = false;
 	this.drawn = false;
 }
@@ -20,7 +30,7 @@ Circle.prototype.drawCircle = function (field) {
 	field.beginPath();
 	field.arc(this.x, this.y, 7, 0, 2*Math.PI);
 	field.lineWidth = 2;
-	field.strokeStyle = this.topicC;
+	field.strokeStyle = this.colour;
 	field.stroke();
 	this.drawn = true;
 }
@@ -31,11 +41,12 @@ Circle.prototype.howerCircle = function (field) {
 	field.beginPath();
 	field.arc (this.x, this.y, 2, 0, 2*Math.PI);
 	field.Width = 1;
-	field.fillStyle = this.topicC;
+	field.fillStyle = this.colour;
 	field.fill();
-	field.strokeStyle = this.topicC;
+	field.strokeStyle = this.colour;
 	field.stroke();
 	this.touched = true;
+	var x = document.createElement("div");
 }
 
 // when the mouse cursor is no longer on the circle, the circle should be unfilled again
@@ -53,9 +64,24 @@ function drawCircles(field, array) {
 	}
 }
 
-function Topic() {
+// function Topic(name, colour) {
+// 	this.name = name;
+//	this.colour = colour;
+// }
 
-}
+// function TopicList() {
+	//	this.n1 = { new Topic("Sonstiges", "black")};
+	// keeps all the topics
+	// property name = name of the topic
+	// property itself = the colour of the topic
+// }
+
+// add property to list with name and colour of the new Topic
+/* TopicList.prototype.addTopic = function (name, colour) {
+	this.
+	this.name = name;
+	this.colour = colour;
+} */
 
 // start
 function init() {
@@ -70,6 +96,10 @@ function init() {
 	
 	var width = ema.width;
 	var height = ema.height;
+
+	// for (j=0; j<topics.length; j++) {
+	// 	topLis.addTopic(topics[j][0],topics[j][1]);
+	// }
 
 	for (i=0; i<circles.length; i++) {
 		circleObjects.push(new Circle(circles[i][0], circles[i][1], circles[i][2]));
@@ -210,3 +240,4 @@ function drawAxes(field, width, height) {
 }
 
 init();
+alert(topLis.n1.name);
